@@ -26,7 +26,8 @@ namespace cat.itb.M6NF2Prac.maps
             Map(x => x.credit).Column("credit");
             Map(x => x.remark).Column("remark");
             References(x => x.product)
-            .Column("product")  
+            .Column("product")
+            .Unique()  
             .Not.LazyLoad()
             .Fetch.Join();
         }

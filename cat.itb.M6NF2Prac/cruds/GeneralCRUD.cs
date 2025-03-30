@@ -37,7 +37,7 @@ namespace cat.itb.M6NF2Prac.cruds
             StoreCloudConnection db = new StoreCloudConnection();
             var conn = db.GetConnection();
 
-            string script = File.ReadAllText("../../MyFiles/store.sql");
+            string script = File.ReadAllText("../../../MyFiles/store.sql");
             var cmd = new NpgsqlCommand(script, conn);
             try
             {
@@ -51,16 +51,7 @@ namespace cat.itb.M6NF2Prac.cruds
             conn.Close();
         }
 
-        public void RestoreHR2DBSession()
-        {
-            string path = @"..\..\MyFiles\store.sql";
-            string sql = File.ReadAllText(path);
-            using (var session = SessionFactoryStoreCloud.Open())
-            {
-                session.CreateSQLQuery(sql).ExecuteUpdate();
-                Console.WriteLine("DB HR2 restored");
-            }
-        }
+      
     }
 }
 

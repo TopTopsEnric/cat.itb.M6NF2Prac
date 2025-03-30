@@ -32,16 +32,38 @@ namespace cat.itb.M6NF2Prac.cruds
             }
         }
 
-        // 🔹 Insertar un nuevo cliente
-        public void Insert(Provider proveedor)
+        public IList<Provider> SelectByCity(string city)
         {
-            using (var session = SessionFactoryStoreCloud.Open())
-            using (var transaction = session.BeginTransaction())
+            using (ISession session = SessionFactoryStoreCloud.Open())
             {
-                session.Save(proveedor);
-                transaction.Commit();
+                // Utilizamos HQL para buscar proveedores por ciudad
+                string hql = "FROM Provider p WHERE p.city = :city";
+                IQuery query = session.CreateQuery(hql);
+                query.SetParameter("city", city);
+
+                return query.List<Provider>();
             }
         }
+
+        public bool UpdateHQL(Provider provider)
+        {
+            using (ISession session = SessionFactoryStoreCloud.Open())
+            using (ITransaction transaction = session.BeginTransaction())
+            {
+                try
+                {
+                    session.Update(provider);
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return false;
+                }
+            }
+        }
+
 
         // 🔹 Actualizar un cliente existente
         public void Update(Provider proveedor)
@@ -136,6 +158,27 @@ namespace cat.itb.M6NF2Prac.cruds
                     .SingleOrDefault<Provider>();
 
                 return result;
+            }
+        }
+
+
+        public void Insert(Provider provider)
+        {
+            using (ISession session = SessionFactoryStoreCloud.Open())
+            using (ITransaction transaction = session.BeginTransaction())
+            {
+                try
+                {
+                    session.Save(provider);
+                    transaction.Commit();
+                    Console.WriteLine($"Proveedor con ID {provider.id} insertado correctamente");
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine($"Error al insertar proveedor: {ex.Message}");
+                    throw;
+                }
             }
         }
     }

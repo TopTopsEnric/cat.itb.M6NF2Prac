@@ -1,5 +1,6 @@
 ﻿using cat.itb.M6NF2Prac.cruds;
 using cat.itb.M6NF2Prac.model;
+using NHibernate.Criterion;
 using System.Net;
 
 namespace cat.itb.M6NF2Prac
@@ -8,7 +9,114 @@ namespace cat.itb.M6NF2Prac
     {
         static void Main(string[] args)
         {
-            Ejercicio9();
+            bool exit = false;
+
+            while (!exit)
+            {
+                Console.Clear();
+                Console.WriteLine("Menú:");
+                Console.WriteLine("1. Ejecutar Drop And Script");
+                Console.WriteLine("2. Ejercicio 1");
+                Console.WriteLine("3. Ejercicio 2");
+                Console.WriteLine("4. Ejercicio 3");
+                Console.WriteLine("5. Ejercicio 4");
+                Console.WriteLine("6. Ejercicio 5");
+                Console.WriteLine("7. Ejercicio 6");
+                Console.WriteLine("8. Ejercicio 7");
+                Console.WriteLine("9. Ejercicio 8");
+                Console.WriteLine("10. Ejercicio 9");
+                Console.WriteLine("11. Ejercicio 10");
+                Console.WriteLine("12. Ejercicio 11");
+                Console.WriteLine("13. Ejercicio 12");
+                Console.WriteLine("14. Ejercicio 13");
+                Console.WriteLine("15. Ejercicio 14");
+                Console.WriteLine("0. Salir");
+                Console.Write("Seleccione una opción: ");
+
+                string option = Console.ReadLine();
+                switch (option)
+                {
+                    case "1":
+                        ExecuteDropAndScript();
+                        break;
+                    case "2":
+                        Ejercicio1();
+                        break;
+                    case "3":
+                        Ejercicio2();
+                        break;
+                    case "4":
+                        Ejercicio3();
+                        break;
+                    case "5":
+                        Ejercicio4();
+                        break;
+                    case "6":
+                        Ejercicio5();
+                        break;
+                    case "7":
+                        Ejercicio6();
+                        break;
+                    case "8":
+                        Ejercicio7();
+                        break;
+                    case "9":
+                        Ejercicio8();
+                        break;
+                    case "10":
+                        Ejercicio9();
+                        break;
+                    case "11":
+                        Ejercicio10();
+                        break;
+                    case "12":
+                        Ejercicio11();
+                        break;
+                    case "13":
+                        Ejercicio12();
+                        break;
+                    case "14":
+                        Ejercicio13();
+                        break;
+                    case "15":
+                        Ejercicio14();
+                        break;
+                    case "0":
+                        exit = true;
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida. Presione cualquier tecla para continuar...");
+                        Console.ReadKey();
+                        break;
+                }
+
+                // Pausa para ver los logs antes de regresar al menú
+                if (!exit)
+                {
+                    Console.WriteLine("\nPresione una tecla para regresar al menú...");
+                    Console.ReadKey();
+                }
+            }
+
+            Console.WriteLine("Gracias por usar el programa. ¡Adiós!");
+        }
+
+
+
+        static void ExecuteDropAndScript()
+        {
+            var crud= new GeneralCRUD();
+            // Lista de tablas a eliminar
+            List<string> tables = new List<string>
+            {
+              "client", "orderprod", "product", "provider", "salesperson"
+             };
+
+            // Llamar a DropTables para eliminar las tablas
+            crud.DropTables(tables);
+
+            // Llamar a RunScriptHR para ejecutar el script
+            crud.RunScriptHR();
         }
 
 
@@ -36,8 +144,8 @@ namespace cat.itb.M6NF2Prac
         static void Ejercicio3()
         {
             var crud = new ProductCRUD();
-            var preus = new List<double>{
-                59.05,25.56,33.12,17.34
+            var preus = new List<decimal>{
+                59.05m ,25.56m,33.12m,17.34m
             };
 
             var productos = new List<Product>
@@ -116,13 +224,13 @@ namespace cat.itb.M6NF2Prac
             }
         }
 
-         static void Ejercicio7()
+        static void Ejercicio7()
         {
             SalespersonCRUD salespersonCRUD = new SalespersonCRUD();
 
             // Obtenemos el vendedor con apellido "YOUNG"
             // Young no me salia con  ningun producto asi que tepongo  "STRONGMAN "que este que si que tiene
-            Salesperson vendedor = salespersonCRUD.SelectBySurname("STRONGMAN"); 
+            Salesperson vendedor = salespersonCRUD.SelectBySurname("STRONGMAN");
 
             if (vendedor != null)
             {
@@ -152,7 +260,7 @@ namespace cat.itb.M6NF2Prac
         }
 
 
-         static void Ejercicio8()
+        static void Ejercicio8()
         {
             OrderCRUD orderCRUD = new OrderCRUD();
 
@@ -188,7 +296,7 @@ namespace cat.itb.M6NF2Prac
             }
         }
 
-         static void Ejercicio9()
+        static void Ejercicio9()
         {
             ProviderCRUD providerCRUD = new ProviderCRUD();
 
@@ -219,14 +327,219 @@ namespace cat.itb.M6NF2Prac
             }
         }
 
+        static void Ejercicio10()
+        {
+            ProductCRUD productCRUD = new ProductCRUD();
+            ProviderCRUD providerCRUD = new ProviderCRUD();
+            // Obtener un vendedor existente para asignarlo a los nuevos productos
+            SalespersonCRUD salespersonCRUD = new SalespersonCRUD();
+            Salesperson vendedor = salespersonCRUD.SelectBySurname("YOUNG"); // Podríamos usar otro vendedor si es necesario
+
+            // Crear primer producto (sin referencia al proveedor inicialmente)
+            Product producto1 = new Product
+            {
+                code = 244234,
+                description = "Martillo profesional reforzado",
+                currentstock = 50,
+                minstock = 10,
+                price = 45.99m,
+                salesp = vendedor,
+                ordenes = new HashSet<Orders>(),
+                prov = null // Inicialmente sin proveedor
+            };
+
+            // Crear el proveedor para el primer producto (sin asignar el producto aún)
+            Provider proveedor1 = new Provider
+            {
+                name = "Herramientas ProTools",
+                address = "123 Calle Industrial",
+                city = "Barcelona",
+                stcode = "BC",
+                zipcode = "08001",
+                area = 05025,
+                phone = "934567890",
+                amount = 200,
+                credit = 15000,
+                remark = "Proveedor de herramientas profesionales",
+                product = producto1 // Inicialmente sin producto
+            };
+
+            // Crear segundo producto (sin referencia al proveedor inicialmente)
+            Product producto2 = new Product
+            {
+                code = 645002,
+                description = "Kit_destornilladores",
+                currentstock = 30,
+                minstock = 5,
+                price = 89.95m,
+                salesp = vendedor,
+                ordenes = new HashSet<Orders>(),
+                prov = null // Inicialmente sin proveedor
+            };
+
+            // Crear el proveedor para el segundo producto (sin asignar el producto aún)
+            Provider proveedor2 = new Provider
+            {
+                name = "ElectroTools S.L.",
+                address = "456 Avenida Tecnológica",
+                city = "Madrid",
+                stcode = "MA",
+                zipcode = "28001",
+                area = 08023,
+                phone = "917654321",
+                amount = 150,
+                credit = 20000,
+                remark = "Especialistas en herramientas eléctricas",
+                product = producto2 // Inicialmente sin producto
+            };
+
+            // Insertar los productos y proveedores
+            try
+            {
+                // Insertamos primero los productos
+                productCRUD.Insert(producto1);
+                productCRUD.Insert(producto2);
+
+                // Ahora asignamos los productos a los proveedores
+                proveedor1.product = producto1;
+                proveedor2.product = producto2;
+
+                // Insertamos los proveedores con los productos ya guardados
+                providerCRUD.Insert(proveedor1);
+                providerCRUD.Insert(proveedor2);
 
 
+                Console.WriteLine("Se han insertado correctamente los dos nuevos productos y sus proveedores");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error durante la inserción: {ex.Message}");
+                // Opcional: mostrar más detalles del error si es una excepción anidada
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Detalle: {ex.InnerException.Message}");
+                }
+            }
+        }
 
+        public static void Ejercicio11()
+        {
+            ClientCRUD clientCRUD = new ClientCRUD();
 
+            // Obtenemos todos los clientes
+            IList<Client> clientes = clientCRUD.SelectAll();
 
+            if (clientes.Count > 0)
+            {
+                Console.WriteLine($"Se han encontrado {clientes.Count} clientes:");
 
+                foreach (Client cliente in clientes)
+                {
+                    Console.WriteLine($"ID: {cliente.id}");
+                    Console.WriteLine($"Código: {cliente.code}");
+                    Console.WriteLine($"Nombre: {cliente.name}");
+                    Console.WriteLine($"Crédito: {cliente.credit}");
+                    Console.WriteLine("------------------------");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No se ha encontrado ningún cliente");
+            }
+        }
 
+        public static void Ejercicio12()
+        {
+            ProviderCRUD providerCRUD = new ProviderCRUD();
 
+            // Obtenemos los proveedores de BELMONT
+            IList<Provider> proveedoresBelmont = providerCRUD.SelectByCity("BELMONT");
+
+            if (proveedoresBelmont.Count > 0)
+            {
+                Console.WriteLine($"Se han encontrado {proveedoresBelmont.Count} proveedores en BELMONT");
+
+                int actualizados = 0;
+
+                foreach (Provider proveedor in proveedoresBelmont)
+                {
+                    Console.WriteLine($"Actualizando crédito del proveedor {proveedor.name} de {proveedor.credit} a 25000");
+
+                    // Actualizamos el crédito a 25000
+                    proveedor.credit = 25000;
+
+                    // Guardamos los cambios
+                    bool resultado = providerCRUD.UpdateHQL(proveedor);
+
+                    if (resultado)
+                    {
+                        actualizados++;
+                        Console.WriteLine("Actualización exitosa");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error al actualizar");
+                    }
+                }
+
+                Console.WriteLine($"Se han actualizado {actualizados} de {proveedoresBelmont.Count} proveedores de BELMONT");
+            }
+            else
+            {
+                Console.WriteLine("No se ha encontrado ningún proveedor en BELMONT");
+            }
+        }
+
+        public static void Ejercicio13()
+        {
+            ProductCRUD productCRUD = new ProductCRUD();
+
+            // Obtenemos los productos con precio superior a 100
+            IList<object[]> productos = productCRUD.SelectByPriceHigherThan(100);
+
+            if (productos.Count > 0)
+            {
+                Console.WriteLine($"Se han encontrado {productos.Count} productos con precio superior a 100:");
+
+                foreach (object[] producto in productos)
+                {
+                    string descripcion = (string)producto[0];
+                    decimal precio = (decimal)producto[1];
+
+                    Console.WriteLine($"Descripción: {descripcion}");
+                    Console.WriteLine($"Precio: {precio}");
+                    Console.WriteLine("------------------------");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No se ha encontrado ningún producto con precio superior a 100");
+            }
+        }
+
+        public static void Ejercicio14()
+        {
+            ClientCRUD clientCRUD = new ClientCRUD();
+
+            // Obtenemos los clientes con crédito superior a 50000
+            IList<Client> clientes = clientCRUD.SelectByCreditHigherThan(50000);
+
+            if (clientes.Count > 0)
+            {
+                Console.WriteLine($"Se han encontrado {clientes.Count} clientes con crédito superior a 50000:");
+
+                foreach (Client cliente in clientes)
+                {
+                    Console.WriteLine($"Nombre: {cliente.name}");
+                    Console.WriteLine($"Crédito: {cliente.credit}");
+                    Console.WriteLine("------------------------");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No se ha encontrado ningún cliente con crédito superior a 50000");
+            }
+        }
 
     }
 }

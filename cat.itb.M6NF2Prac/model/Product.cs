@@ -13,12 +13,12 @@ namespace cat.itb.M6NF2Prac.model
         public virtual string description { get; set; }
         public virtual int currentstock { get; set; }
         public virtual int minstock { get; set; }
-        public virtual double price { get; set; }
+        public virtual decimal price { get; set; }
         public virtual Salesperson salesp { get; set; }
-        public virtual Provider prov { get; set; }
+        public virtual Provider? prov { get; set; }
 
 
-        public virtual ISet<Orders> ordenes { get; set; }
+        public virtual ISet<Orders>? ordenes { get; set; }
 
 
     }

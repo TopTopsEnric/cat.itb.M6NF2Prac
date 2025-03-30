@@ -31,6 +31,16 @@ namespace cat.itb.M6NF2Prac.cruds
                 return session.Query<Client>().FirstOrDefault(c => c.id == id);
             }
         }
+        public IList<Client> SelectByCreditHigherThan(decimal credit)
+        {
+            using (ISession session = SessionFactoryStoreCloud.Open())
+            {
+                // Usamos LINQ para consultar clientes con crédito superior al especificado
+                return session.Query<Client>()
+                    .Where(c => c.credit > credit)
+                    .ToList();
+            }
+        }
 
         // 🔹 Insertar un nuevo cliente
         public void Insert(Client client)
@@ -111,7 +121,7 @@ namespace cat.itb.M6NF2Prac.cruds
                     id = rdr.GetInt32(rdr.GetOrdinal("id")),
                     code = rdr.GetInt32(rdr.GetOrdinal("code")),
                     name = rdr.GetString(rdr.GetOrdinal("name")),
-                    credit = rdr.GetFloat(rdr.GetOrdinal("credit"))
+                    credit = rdr.GetDecimal(rdr.GetOrdinal("credit")),
                 };
             }
             else

@@ -30,10 +30,12 @@ namespace cat.itb.M6NF2Prac.maps
                  .Cascade.AllDeleteOrphan()
                  .Fetch.Join();
             HasOne(x => x.prov)
-           .PropertyRef("product")  // Referencia a la propiedad en Provider
-           .Not.LazyLoad()
-           .Cascade.AllDeleteOrphan()
-           .Fetch.Join();
+              .PropertyRef("product")
+              .Not.LazyLoad()
+               .Cascade.None();
+               //.Nullable(); // Permite valores nulos
+
+
         }
     }
 }

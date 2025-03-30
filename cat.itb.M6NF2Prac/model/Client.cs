@@ -11,7 +11,7 @@ namespace cat.itb.M6NF2Prac.model
         public virtual int id { get; set; }
         public virtual int code { get; set; }
         public virtual string name { get; set; }
-        public virtual float credit { get; set; }
+        public virtual decimal credit { get; set; }
 
         public virtual ISet<Orders> comandes { get; set; }
 

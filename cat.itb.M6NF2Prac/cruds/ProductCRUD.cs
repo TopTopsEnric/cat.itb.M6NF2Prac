@@ -1,5 +1,7 @@
 ﻿using cat.itb.M6NF2Prac.connections;
 using cat.itb.M6NF2Prac.model;
+using NHibernate;
+using NHibernate.Criterion;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -31,16 +33,7 @@ namespace cat.itb.M6NF2Prac.cruds
             }
         }
 
-        // 🔹 Insertar un nuevo cliente
-        public void Insert(Product producto)
-        {
-            using (var session = SessionFactoryStoreCloud.Open())
-            using (var transaction = session.BeginTransaction())
-            {
-                session.Save(producto);
-                transaction.Commit();
-            }
-        }
+
 
         // 🔹 Actualizar un cliente existente
         public void Update(Product producto)
@@ -91,7 +84,7 @@ namespace cat.itb.M6NF2Prac.cruds
                     description = rdr.GetString(rdr.GetOrdinal("description")),
                     currentstock = rdr.GetInt32(rdr.GetOrdinal("currentstock")),
                     minstock = rdr.GetInt32(rdr.GetOrdinal("minstock")),
-                    price = rdr.GetFloat(rdr.GetOrdinal("price")),
+                    price = rdr.GetDecimal(rdr.GetOrdinal("price")),
                     //salesp = rdr.GetInt32(rdr.GetOrdinal("salesp"))
                 };
             }
@@ -107,15 +100,55 @@ namespace cat.itb.M6NF2Prac.cruds
             StoreCloudConnection db = new StoreCloudConnection();
             var conn = db.GetConnection();
             string sql = "UPDATE product SET price = @price WHERE id = @id";
-            
+
             using (var cmd = new NpgsqlCommand(sql, conn))
+            {
+                cmd.Parameters.AddWithValue("price", producto.price);
+                cmd.Parameters.AddWithValue("id", producto.id);
+                int nRows = cmd.ExecuteNonQuery();
+                Console.WriteLine($"Producta modificat correctament");
+            }
+
+        }
+
+        public void Insert(Product product)
+        {
+            using (ISession session = SessionFactoryStoreCloud.Open())
+            using (ITransaction transaction = session.BeginTransaction())
+            {
+                try
                 {
-                      cmd.Parameters.AddWithValue("price", producto.price);
-                      cmd.Parameters.AddWithValue("id", producto.id);
-                      int nRows = cmd.ExecuteNonQuery();
-                      Console.WriteLine($"Producta modificat correctament");
+                    session.Save(product);
+                    transaction.Commit();
+                    Console.WriteLine($"Producto con ID {product.id} insertado correctamente");
                 }
-            
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine($"Error al insertar producto: {ex.Message}");
+                    throw;
+                }
+            }
+        }
+
+        public IList<object[]> SelectByPriceHigherThan(decimal price)
+        {
+            using (ISession session = SessionFactoryStoreCloud.Open())
+            {
+                // Creamos un alias para Product
+                Product productAlias = null;
+
+                // Utilizamos QueryOver con Projections para seleccionar solo description y price
+                var query = session.QueryOver<Product>(() => productAlias)
+                    .Where(() => productAlias.price > price)
+                    .Select(
+                        Projections.Property(() => productAlias.description),
+                        Projections.Property(() => productAlias.price)
+                    );
+
+                // Ejecutamos la consulta y obtenemos los resultados como un array de objetos
+                return query.List<object[]>();
+            }
         }
 
 
