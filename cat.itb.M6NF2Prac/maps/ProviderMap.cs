@@ -25,7 +25,10 @@ namespace cat.itb.M6NF2Prac.maps
             Map(x => x.amount).Column("amount");
             Map(x => x.credit).Column("credit");
             Map(x => x.remark).Column("remark");
-            HasOne(x => x.product).Constrained();
+            References(x => x.product)
+            .Column("product")  
+            .Not.LazyLoad()
+            .Fetch.Join();
         }
     }
 }

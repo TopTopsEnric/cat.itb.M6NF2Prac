@@ -18,7 +18,7 @@ namespace cat.itb.M6NF2Prac.model
         public virtual Provider prov { get; set; }
 
 
-        public virtual ISet<Order> ordenenes { get; set; }
+        public virtual ISet<Orders> ordenes { get; set; }
 
 
     }

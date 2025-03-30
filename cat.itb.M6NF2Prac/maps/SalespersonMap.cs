@@ -18,7 +18,7 @@ namespace cat.itb.M6NF2Prac.maps
             Map(x => x.job).Column("job");
             Map(x => x.startdate).Column("startdate");
             Map(x => x.salary).Column("salary");
-            Map(x => x.commission).Column("comission");
+            Map(x => x.commission).Column("commission");
             Map(x => x.dep).Column("dep");
             HasMany(x => x.product)
                  .AsSet()

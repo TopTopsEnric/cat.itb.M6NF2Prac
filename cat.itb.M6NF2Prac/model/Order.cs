@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace cat.itb.M6NF2Prac.model
 {
-    public  class Order
+    public  class Orders
     {
         public virtual int id { get; set; }
 
         public virtual Product product { get; set; }
         public virtual Client client { get; set; }
-        public virtual DateTimeOffset orderdate { get; set; }
+        public virtual DateTime orderdate { get; set; }
         public virtual int amount { get; set; }
-        public virtual DateTimeOffset deliverydate { get; set; }
-        public virtual float cost { get; set; }
+        public virtual DateTime deliverydate { get; set; }
+        public virtual decimal cost { get; set; }
     }
 }

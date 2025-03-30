@@ -19,18 +19,21 @@ namespace cat.itb.M6NF2Prac.maps
             Map(x => x.currentstock).Column("currentstock");
             Map(x => x.minstock).Column("minstock");
             Map(x => x.price).Column("price");
-            Map(x => x.salesp).Column("salesp");
             References(x => x.salesp)
                 .Column("salesp")
                 .Not.LazyLoad()
                 .Fetch.Join();
-            HasMany(x => x.ordenenes)
+            HasMany(x => x.ordenes)
                  .AsSet()
                  .KeyColumn("product")
                  .Not.LazyLoad()
                  .Cascade.AllDeleteOrphan()
                  .Fetch.Join();
-            HasOne(x => x.prov).Cascade.All();
+            HasOne(x => x.prov)
+           .PropertyRef("product")  // Referencia a la propiedad en Provider
+           .Not.LazyLoad()
+           .Cascade.AllDeleteOrphan()
+           .Fetch.Join();
         }
     }
 }

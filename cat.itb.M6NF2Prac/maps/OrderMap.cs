@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace cat.itb.M6NF2Prac.maps
 {
-    internal class OrderMap: ClassMap<Order>
+    internal class OrderMap: ClassMap<Orders>
     {
         public OrderMap()
         {

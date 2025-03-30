@@ -1,5 +1,6 @@
 ﻿using cat.itb.M6NF2Prac.connections;
 using cat.itb.M6NF2Prac.model;
+using NHibernate;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -92,14 +93,14 @@ namespace cat.itb.M6NF2Prac.cruds
         public Client SelectByNameADO(string name)
         {
             StoreCloudConnection db = new StoreCloudConnection();
-            using var conn = db.GetConnection(); 
+            using var conn = db.GetConnection();
             string sql = "SELECT * FROM client WHERE name=@name";
 
             using var cmd = new NpgsqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("name", name);
             cmd.Prepare(); // Usando Prepared Statement
 
-       
+
 
             using NpgsqlDataReader rdr = cmd.ExecuteReader();
 
@@ -110,7 +111,7 @@ namespace cat.itb.M6NF2Prac.cruds
                     id = rdr.GetInt32(rdr.GetOrdinal("id")),
                     code = rdr.GetInt32(rdr.GetOrdinal("code")),
                     name = rdr.GetString(rdr.GetOrdinal("name")),
-                    credit = rdr.GetFloat(rdr.GetOrdinal("credit")) 
+                    credit = rdr.GetFloat(rdr.GetOrdinal("credit"))
                 };
             }
             else
@@ -129,10 +130,24 @@ namespace cat.itb.M6NF2Prac.cruds
 
             using var cmd = new NpgsqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("id", cliente.id);
-            cmd.Prepare(); 
+            cmd.Prepare();
             using NpgsqlDataReader rdr = cmd.ExecuteReader();
 
-           Console.WriteLine($" S’ha eliminat correctament el client amb id = {cliente.id}.");
+            Console.WriteLine($" S’ha eliminat correctament el client amb id = {cliente.id}.");
+        }
+
+        public Client SelectByName(string name)
+        {
+            using (ISession session = SessionFactoryStoreCloud.Open())
+            {
+                // Utilizamos HQL para buscar el cliente por nombre
+                string hql = "FROM Client c WHERE c.name = :name";
+                IQuery query = session.CreateQuery(hql);
+                query.SetParameter("name", name);
+
+                // Devolvemos el primer cliente que coincida con el nombre
+                return query.UniqueResult<Client>();
+            }
         }
     }
 }

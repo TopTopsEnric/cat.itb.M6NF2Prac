@@ -1,5 +1,8 @@
 ﻿using cat.itb.M6NF2Prac.connections;
 using cat.itb.M6NF2Prac.model;
+using NHibernate.Criterion;
+using NHibernate;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +66,76 @@ namespace cat.itb.M6NF2Prac.cruds
                     session.Delete(client);
                     transaction.Commit();
                 }
+            }
+        }
+
+        public List<Provider> SelectCreditLowerThanADO(float maxCredit)
+        {
+            StoreCloudConnection db = new StoreCloudConnection();
+            var conn = db.GetConnection();
+
+            List<Provider> providers = new List<Provider>();
+
+            try
+            {
+                // Construcción de la consulta sin parámetros preparados
+                string sql = $"SELECT * FROM provider WHERE credit < {maxCredit}";
+
+                using var cmd = new NpgsqlCommand(sql, conn);
+                using NpgsqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    Provider provider = new Provider
+                    {
+                        id = rdr.GetInt32(0),
+                        name = rdr.GetString(1),
+                        address = rdr.GetString(2),
+                        city = rdr.GetString(3),
+                        stcode = rdr.GetString(4),
+                        zipcode = rdr.GetString(5),
+                        area = rdr.GetInt32(6),
+                        phone = rdr.GetString(7),
+                        // Si `product` es un objeto, necesitarás hacer una consulta separada o modificar esto
+                        amount = rdr.GetInt32(9),
+                        credit = rdr.GetFloat(10),
+                        remark = rdr.GetString(11)
+                    };
+
+                    providers.Add(provider);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            return providers;
+        }
+
+
+        public Provider SelectLowestAmount()
+        {
+            using (ISession session = SessionFactoryStoreCloud.Open())
+            {
+                // Utilizamos QueryOver con subquery para encontrar el proveedor con la cantidad mínima
+                Provider providerAlias = null;
+
+                // Subconsulta para obtener la cantidad mínima
+                QueryOver<Provider> subQuery = QueryOver.Of<Provider>()
+                    .Select(Projections.Min<Provider>(x => x.amount));
+
+                // Consulta principal que busca el proveedor cuya cantidad sea igual a la mínima
+                var result = session.QueryOver<Provider>(() => providerAlias)
+                    .WithSubquery.WhereProperty(() => providerAlias.amount)
+                    .Eq(subQuery)
+                    .SingleOrDefault<Provider>();
+
+                return result;
             }
         }
     }

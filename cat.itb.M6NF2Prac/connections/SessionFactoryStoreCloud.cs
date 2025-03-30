@@ -26,7 +26,7 @@ namespace cat.itb.M6NF2Prac.connections
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Product>())
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Provider>())
                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Salesperson>())
-                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Order>());
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Orders>());
 
             _session = configMap.BuildSessionFactory();
 

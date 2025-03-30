@@ -13,7 +13,7 @@ namespace cat.itb.M6NF2Prac.model
         public virtual string name { get; set; }
         public virtual float credit { get; set; }
 
-        public virtual ISet<Order> comandes { get; set; }
+        public virtual ISet<Orders> comandes { get; set; }
 
     }
 }
